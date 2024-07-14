@@ -1,13 +1,13 @@
-.login {
+.register {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    overflow: hidden; /* Ensure the background covers the entire area */
+    overflow: hidden; 
 }
 
-.login::before {
+.register::before {
     content: "";
     position: absolute;
     top: 0;
@@ -21,7 +21,7 @@
     z-index: -1; /* Ensure the blur is behind the content */
 }
 
-.lContainer {
+.rContainer {
     width: 300px;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
@@ -33,33 +33,33 @@
     z-index: 1; /* Ensure the container is above the blur */
 }
 
-.lInput {
+.rInput {
     width: 100%;
     margin-bottom: 10px;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
-.lButton {
+.rButton {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     color: #fff;
-    background-color: #007bff; 
+    background-color: #007bff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
-.lButton:hover {
-    background-color: #0056b3; 
+.rButton:hover {
+    background-color: #0056b3;
 }
 
 span.error-message {
-    color: #dc3545; 
+    color: #dc3545;
     font-size: 14px;
     margin-top: 5px;
 }

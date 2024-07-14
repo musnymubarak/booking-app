@@ -5,11 +5,13 @@ import { useContext, useState, useEffect } from "react";
 import { SearchContext } from "../../context/SearchContext";
 import './reserve.css';
 import axiosInstance from "../../hooks/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const Reserve = ({ setOpen, hotelId }) => {
     const { data, loading, error } = useFetch(`/hotels/room/${hotelId}`);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const { dates } = useContext(SearchContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (dates && dates[0].startDate && dates[0].endDate) {
@@ -39,16 +41,21 @@ const Reserve = ({ setOpen, hotelId }) => {
     const alldates = getDatesInRange(dates[0].startDate, dates[0].endDate);
 
     const isAvailable = (roomNumber) => {
-        if (!roomNumber.unavailableDates) {
-            return true;
+        if (!roomNumber.unavailableDates || roomNumber.unavailableDates.length === 0) {
+            return true; // Room has no unavailable dates, so it's available
         }
-        const isFound = roomNumber.unavailableDates.some(date =>
-            alldates.includes(new Date(date).getTime())
+
+        // Convert selected dates to ISO string format for comparison
+        const selectedDateStrings = alldates.map(date => new Date(date).toISOString().slice(0, 10));
+
+        // Check if any selected date matches any of the room's unavailable dates
+        const isBookedOnSelectedDates = selectedDateStrings.some(date =>
+            roomNumber.unavailableDates.includes(date)
         );
 
         const isSelected = selectedRooms.includes(roomNumber._id);
 
-        return !isFound && !isSelected;
+        return !isBookedOnSelectedDates && !isSelected;
     };
 
     const handleSelect = (e) => {
@@ -77,6 +84,8 @@ const Reserve = ({ setOpen, hotelId }) => {
                     return res.data;
                 })
             );
+            alert("Room successfully booked!");
+            navigate("/"); // Navigate to home page
         } catch (err) {
             console.error("Error updating room availability:", err);
         }
@@ -96,8 +105,8 @@ const Reserve = ({ setOpen, hotelId }) => {
                 ) : error ? (
                     <p>Error: {error.message}</p>
                 ) : (
-                    data.map((item, index) => (
-                        <div className="rItem" key={index}>
+                    data.map((item) => (
+                        <div className="rItem" key={item._id}>
                             <div className="rItemInfo">
                                 <div className="rTitle">{item.title}</div>
                                 <div className="rDescription">{item.desc}</div>
@@ -108,7 +117,7 @@ const Reserve = ({ setOpen, hotelId }) => {
                             </div>
                             <div className="rSelectRooms">
                                 {item.roomNumbers.map((roomNumber) => (
-                                    <div className="room">
+                                    <div className="room" key={roomNumber._id}>
                                         <label>{roomNumber.number}</label>
                                         <input
                                             type="checkbox"
